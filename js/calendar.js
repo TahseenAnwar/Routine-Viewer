@@ -3,6 +3,7 @@
 
 export const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 export const PX_PER_MIN = 1; // 60px per hour
+const COURSE_COLORS = ["course-0", "course-1", "course-2", "course-3", "course-4"];
 
 export function fmtTime(min) {
   let h = Math.floor(min / 60);
@@ -23,11 +24,9 @@ export function sectionsConflict(a, b) {
   return false;
 }
 
-/** Stable colour per course (same course always gets the same hue). */
-export function courseHue(code) {
-  let h = 0;
-  for (const ch of code) h = (h * 31 + ch.charCodeAt(0)) % 360;
-  return h;
+/** Select a color from the fixed palette by a course's position in the routine. */
+export function courseColor(index) {
+  return COURSE_COLORS[index % COURSE_COLORS.length];
 }
 
 function el(tag, className, text) {
@@ -70,6 +69,11 @@ function layoutDay(events) {
  */
 export function renderCalendar(root, sections, opts = {}) {
   root.replaceChildren();
+
+  const courseIndexes = new Map();
+  for (const section of sections) {
+    if (!courseIndexes.has(section.course)) courseIndexes.set(section.course, courseIndexes.size);
+  }
 
   // Collect events per day
   const perDay = Array.from({ length: 7 }, () => []);
@@ -119,7 +123,7 @@ export function renderCalendar(root, sections, opts = {}) {
     for (const ev of events) {
       const s = ev.section;
       const block = el("div", "event" + (ev.clash ? " clash" : ""));
-      block.style.setProperty("--hue", courseHue(s.course));
+      block.classList.add(courseColor(courseIndexes.get(s.course)));
       block.style.top = (ev.start - startHour * 60) * PX_PER_MIN + "px";
       block.style.height = (ev.end - ev.start) * PX_PER_MIN - 2 + "px";
       block.style.left = `calc(${(ev.lane / ev.lanes) * 100}% + 2px)`;

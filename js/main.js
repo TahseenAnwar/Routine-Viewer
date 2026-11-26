@@ -7,6 +7,7 @@ import { renderCalendar, sectionsConflict, fmtTime } from "./calendar.js";
 const MAX_RESULTS = 50;
 const STORE_SECTIONS = "routine.sections.v1";
 const STORE_SELECTED = "routine.selected.v1";
+const STORE_THEME = "routine.theme.v1";
 
 // ---------- State ----------
 let allSections = [];      // every section parsed from the PDF
@@ -25,6 +26,8 @@ const selectedListEl = $("selectedList");
 const warningEl = $("warning");
 const clearBtn = $("clearBtn");
 const printBtn = $("printBtn");
+const themeToggle = $("themeToggle");
+const themeToggleLabel = $("themeToggleLabel");
 
 // ---------- Helpers ----------
 function el(tag, className, text) {
@@ -60,6 +63,11 @@ function load() {
 
 function setStatus(msg) {
   statusEl.textContent = msg;
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  themeToggleLabel.textContent = theme === "dark" ? "Use light mode" : "Use dark mode";
 }
 
 const byId = (id) => allSections.find((s) => s.id === id);
@@ -225,7 +233,23 @@ clearBtn.addEventListener("click", () => {
 });
 
 printBtn.addEventListener("click", () => window.print());
+themeToggle.addEventListener("click", () => {
+  const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(theme);
+  try {
+    localStorage.setItem(STORE_THEME, theme);
+  } catch (err) {
+    console.warn("Could not save the theme preference.", err);
+  }
+});
 
 // ---------- Start ----------
+let theme = "light";
+try {
+  theme = localStorage.getItem(STORE_THEME) === "dark" ? "dark" : "light";
+} catch (err) {
+  console.warn("Could not load the theme preference.", err);
+}
+applyTheme(theme);
 load();
 refresh();
