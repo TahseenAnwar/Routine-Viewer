@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Weekly Routine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>My Weekly Routine</h1>
+    <div class="upload">
+      <label class="btn primary" for="pdfInput">Upload routine PDF</label>
+      <input id="pdfInput" type="file" accept="application/pdf" hidden>
+      <progress id="progress" value="0" max="1" hidden></progress>
+      <span id="status" class="status" role="status">No PDF loaded yet.</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Search & add -->
+    <aside class="panel search-panel">
+      <h2>Search &amp; add sections</h2>
+      <input id="searchInput" type="search" placeholder="e.g. CSE 101, ACT101 2, MW, BBA…" autocomplete="off">
+      <p id="resultsInfo" class="info"></p>
+      <ul id="results" class="results"></ul>
+    </aside>
+
+    <!-- Weekly view -->
+    <section class="panel routine-panel">
+      <div class="routine-head">
+        <h2>Weekly routine</h2>
+        <div class="actions">
+          <button id="printBtn" class="btn small ghost" type="button">Print</button>
+          <button id="clearBtn" class="btn small ghost" type="button">Clear all</button>
+        </div>
+      </div>
+      <ul id="selectedList" class="chips"></ul>
+      <div id="warning" class="warning" role="alert" hidden></div>
+      <div id="calendar" class="calendar-wrap"></div>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
